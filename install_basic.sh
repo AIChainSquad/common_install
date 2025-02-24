@@ -100,7 +100,7 @@ function install_docker(){
     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt-get update
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 }
 
 # 主菜单
@@ -109,6 +109,7 @@ function main_menu() {
     echo "=========================Linux基础环境安装======================================="
     echo "请选择要执行的操作:"
     echo "1. 安装基础环境"
+    echo "2. 安装docker"
     read -p "请输入选项（1-9）: " OPTION
     case $OPTION in
     1) install_basic ;;
