@@ -77,7 +77,7 @@ function install_pm2() {
 
 function install_basic() {
     apt update && apt upgrade -y
-    apt install curl sudo git python3-venv zip iptables build-essential wget jq make gcc nano npm -y
+    apt install curl sudo git python3-venv zip iptables build-essential wget jq make gcc nano npm vim tmux -y
     install_conda
     ensure_conda_initialized
     install_nodejs_and_npm
