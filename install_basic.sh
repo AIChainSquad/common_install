@@ -168,6 +168,50 @@ function install_subtensor(){
     cd ..
 }
 
+# 一键创建并配置 Conda 环境（try）
+function install_conda_env_try(){
+	echo "开始创建并配置 Conda 环境: try"
+
+	# 确保 Conda 已安装并可用
+	install_conda
+	ensure_conda_initialized
+	if [ -f "$MINICONDA_PATH/etc/profile.d/conda.sh" ]; then
+		source "$MINICONDA_PATH/etc/profile.d/conda.sh"
+	fi
+	eval "$("$CONDA_EXECUTABLE" shell.bash hook)"
+
+	# 创建环境（若不存在）
+	if conda env list | awk '{print $1}' | grep -qx "try"; then
+		echo "Conda 环境 try 已存在，跳过创建"
+	else
+		conda create -n try -y python=3.12
+	fi
+
+	# 激活环境
+	conda activate try
+
+	# 安装依赖
+	pip install --upgrade pip
+	pip install bittensor
+	pip install bittensor-cli
+	pip install pytz
+	pip install "git+https://github.com/rayonlabs/fiber.git@2.5.0"
+	pip uninstall -y async-substrate-interface || true
+	pip install -U async-substrate-interface
+
+	# 简要校验
+	python -c "import sys; print('Python:', sys.version.split()[0])" || true
+	python - <<'PY'
+try:
+	import bittensor as bt
+	print('bittensor ok')
+except Exception as e:
+	print('bittensor 校验跳过/失败:', e)
+PY
+
+	echo "✅ Conda 环境 try 配置完成。使用: 'source $MINICONDA_PATH/etc/profile.d/conda.sh && conda activate try'"
+}
+
 # 主菜单
 function main_menu() {
     clear
@@ -176,11 +220,13 @@ function main_menu() {
     echo "1. 安装基础环境"
     echo "2. 安装docker"
     echo "3. 安装和编译Subtensor节点"
-    read -p "请输入选项（1-3）: " OPTION
+    echo "4. 一键安装Conda环境(try)并配置bittensor"
+    read -p "请输入选项（1-4）: " OPTION
     case $OPTION in
     1) install_basic ;;
     2) install_docker ;;
     3) install_subtensor ;;
+    4) install_conda_env_try ;;
     *) echo "无效选项。" ;;
     esac
 }
