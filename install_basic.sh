@@ -180,28 +180,48 @@ function install_conda_env_try(){
 	fi
 	eval "$("$CONDA_EXECUTABLE" shell.bash hook)"
 
+	# 处理 Anaconda ToS（非交互环境需要先接受）
+	# 参考错误提示：CondaToSNonInteractiveError
+	conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main >/dev/null 2>&1 || true
+	conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r >/dev/null 2>&1 || true
+
 	# 创建环境（若不存在）
 	if conda env list | awk '{print $1}' | grep -qx "try"; then
 		echo "Conda 环境 try 已存在，跳过创建"
 	else
-		conda create -n try -y python=3.12
+		echo "创建 Conda 环境 try（python=3.12）..."
+		if ! conda create -n try -y python=3.12; then
+			echo "首次创建环境失败，尝试移除需 ToS 的渠道并使用 conda-forge 重试..."
+			# 回退方案：移除 anaconda 官方渠道，改用 conda-forge
+			conda config --remove channels https://repo.anaconda.com/pkgs/main >/dev/null 2>&1 || true
+			conda config --remove channels https://repo.anaconda.com/pkgs/r >/dev/null 2>&1 || true
+			conda config --add channels conda-forge >/dev/null 2>&1 || true
+			conda config --set channel_priority flexible >/dev/null 2>&1 || true
+			conda create -n try -y -c conda-forge python=3.12 || { echo "❌ 创建 Conda 环境 try 仍然失败，请手动检查 conda 渠道与 ToS 状态。"; return 1; }
+		fi
 	fi
 
-	# 激活环境
-	conda activate try
+	# 激活环境（供用户后续使用）；安装时使用显式 python 路径以避免激活失败导致装到 base
+	conda activate try || true
+	ENV_PREFIX="$MINICONDA_PATH/envs/try"
+	ENV_PY="$ENV_PREFIX/bin/python"
+	if [ ! -x "$ENV_PY" ]; then
+		echo "❌ 未找到环境 Python: $ENV_PY"
+		return 1
+	fi
 
 	# 安装依赖
-	pip install --upgrade pip
-	pip install bittensor
-	pip install bittensor-cli
-	pip install pytz
-	pip install "git+https://github.com/rayonlabs/fiber.git@2.5.0"
-	pip uninstall -y async-substrate-interface || true
-	pip install -U async-substrate-interface
+	"$ENV_PY" -m pip install --upgrade pip setuptools wheel
+	"$ENV_PY" -m pip install bittensor
+	"$ENV_PY" -m pip install bittensor-cli
+	"$ENV_PY" -m pip install pytz
+	"$ENV_PY" -m pip install "git+https://github.com/rayonlabs/fiber.git@2.5.0"
+	"$ENV_PY" -m pip uninstall -y async-substrate-interface || true
+	"$ENV_PY" -m pip install -U async-substrate-interface
 
 	# 简要校验
-	python -c "import sys; print('Python:', sys.version.split()[0])" || true
-	python - <<'PY'
+	"$ENV_PY" -c "import sys; print('Python:', sys.version.split()[0])" || true
+	"$ENV_PY" - <<'PY'
 try:
 	import bittensor as bt
 	print('bittensor ok')
