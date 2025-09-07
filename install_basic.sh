@@ -54,7 +54,7 @@ function install_nodejs_and_npm() {
         echo "Node.js 已安装，版本: $(node -v)"
     else
         echo "Node.js 未安装，正在安装..."
-        curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
         sudo apt-get install -y nodejs git
     fi
     if command -v npm > /dev/null 2>&1; then
