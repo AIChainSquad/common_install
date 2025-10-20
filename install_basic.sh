@@ -215,6 +215,7 @@ function install_conda_env_try(){
 	"$ENV_PY" -m pip install bittensor
 	"$ENV_PY" -m pip install bittensor-cli
 	"$ENV_PY" -m pip install pytz
+	"$ENV_PY" -m pip install redis
 	"$ENV_PY" -m pip install "git+https://github.com/rayonlabs/fiber.git@2.5.0"
 	"$ENV_PY" -m pip uninstall -y async-substrate-interface || true
 	"$ENV_PY" -m pip install -U async-substrate-interface
