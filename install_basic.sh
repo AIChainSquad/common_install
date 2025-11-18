@@ -54,8 +54,14 @@ function install_nodejs_and_npm() {
         echo "Node.js 已安装，版本: $(node -v)"
     else
         echo "Node.js 未安装，正在安装..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-        sudo apt-get install -y nodejs git
+        # curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        # sudo apt-get install -y nodejs git
+		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+		# in lieu of restarting the shell
+		\. "$HOME/.nvm/nvm.sh"
+		# Download and install Node.js:
+		nvm install 24
+		echo "node 已安装，版本: $(node -v)"
     fi
     if command -v npm > /dev/null 2>&1; then
         echo "npm 已安装，版本: $(npm -v)"
