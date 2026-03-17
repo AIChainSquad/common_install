@@ -286,13 +286,10 @@ function install_conda_env_try(){
 
     # 安装依赖
     "$ENV_PY" -m pip install --upgrade pip setuptools wheel
-    "$ENV_PY" -m pip install bittensor
-    "$ENV_PY" -m pip install bittensor-cli
-    "$ENV_PY" -m pip install pytz
-    "$ENV_PY" -m pip install redis
-    "$ENV_PY" -m pip install "git+https://github.com/rayonlabs/fiber.git@2.5.0"
-    "$ENV_PY" -m pip uninstall -y async-substrate-interface || true
-    "$ENV_PY" -m pip install -U async-substrate-interface
+    "$ENV_PY" -m pip install bittensor==10.1.0
+    "$ENV_PY" -m pip install bittensor-cli==9.18.1
+    "$ENV_PY" -m pip install pytz==2026.1
+    "$ENV_PY" -m pip install redis==7.3.0
 
     # 简要校验
     "$ENV_PY" -c "import sys; print('Python:', sys.version.split()[0])" || true
