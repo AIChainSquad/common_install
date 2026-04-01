@@ -291,6 +291,8 @@ function install_conda_env_try(){
     "$ENV_PY" -m pip install pytz==2026.1
     "$ENV_PY" -m pip install redis==7.3.0
     "$ENV_PY" -m pip install bittensor-wallet==4.0.1
+    "$ENV_PY" -m pip install cryptography==46.0.6
+    "$ENV_PY" -m pip install python-dotenv==1.2.2
 
     # 简要校验
     "$ENV_PY" -c "import sys; print('Python:', sys.version.split()[0])" || true
