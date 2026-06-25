@@ -286,12 +286,14 @@ function install_conda_env_try(){
 
     # 安装依赖
     "$ENV_PY" -m pip install --upgrade pip setuptools wheel
-    "$ENV_PY" -m pip install bittensor==10.2.0
-    "$ENV_PY" -m pip install bittensor-cli==9.20.0
-    "$ENV_PY" -m pip install pytz==2026.1
-    "$ENV_PY" -m pip install redis==7.3.0
-    "$ENV_PY" -m pip install bittensor-wallet==4.0.1
-    "$ENV_PY" -m pip install cryptography==46.0.6
+    "$ENV_PY" -m pip install bittensor==10.4.1
+    "$ENV_PY" -m pip install bittensor-cli==9.22.3
+    "$ENV_PY" -m pip install pytz==2026.2
+    "$ENV_PY" -m pip install redis==8.0.1
+    "$ENV_PY" -m pip install bittensor-wallet==4.1.0
+    "$ENV_PY" -m pip install cryptography==49.0.0
+    "$ENV_PY" -m pip install coincurve==21.0.0
+    "$ENV_PY" -m pip install secp256k1==0.14.0
     "$ENV_PY" -m pip install python-dotenv==1.2.2
 
     # 简要校验
@@ -302,6 +304,13 @@ try:
     print('bittensor ok')
 except Exception as e:
     print('bittensor 校验跳过/失败:', e)
+
+for module_name in ("coincurve", "secp256k1"):
+    try:
+        __import__(module_name)
+        print(f"{module_name} ok")
+    except Exception as e:
+        print(f"{module_name} 校验跳过/失败:", e)
 PY
 
     echo "✅ Conda 环境 try 配置完成。使用: 'source $MINICONDA_PATH/etc/profile.d/conda.sh && conda activate try'"
