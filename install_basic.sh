@@ -286,8 +286,8 @@ function install_conda_env_try(){
 
     # 安装依赖
     "$ENV_PY" -m pip install --upgrade pip setuptools wheel
-    "$ENV_PY" -m pip install bittensor==10.4.1
-    "$ENV_PY" -m pip install bittensor-cli==9.22.3
+    "$ENV_PY" -m pip install bittensor==10.5.0
+    "$ENV_PY" -m pip install bittensor-cli==9.23.1
     "$ENV_PY" -m pip install pytz==2026.2
     "$ENV_PY" -m pip install redis==8.0.1
     "$ENV_PY" -m pip install bittensor-wallet==4.1.0
