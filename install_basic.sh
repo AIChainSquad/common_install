@@ -423,6 +423,8 @@ PY
 # 多台机器之间比较毫秒级时间戳需要 chrony（安装后会替代 systemd-timesyncd）
 function setup_time_sync() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y chrony || { echo "❌ chrony 安装失败"; return 1; }
+    # Ubuntu 24.04 上装完 chrony 后，旧的 systemd-timesyncd 进程可能还在跑、chrony 也没自动启动，这里显式处理
+    systemctl stop systemd-timesyncd >/dev/null 2>&1
     systemctl enable --now chrony >/dev/null 2>&1 || echo "⚠️  chrony 启动失败，请手动检查: systemctl status chrony"
     echo "✅ 对时: $(chronyc tracking 2>/dev/null | grep 'System time' | sed 's/^ *//')"
 }
