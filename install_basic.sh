@@ -289,7 +289,10 @@ function install_subtensor(){
 
     # 编译 Subtensor
     echo "开始编译 Subtensor (这可能需要一些时间)..."
-    cargo build -p node-subtensor --profile=production --features=metadata-hash
+    # 依赖里的 RocksDB 8.1.1 有几个头文件漏了 #include <cstdint>，GCC 15（Ubuntu 26.04 起）
+    # 会因此编译失败。这里强制给所有 C++ 源文件带上这个头，对旧版本编译器没有影响。
+    CXXFLAGS="${CXXFLAGS:+$CXXFLAGS }-include cstdint" \
+        cargo build -p node-subtensor --profile=production --features=metadata-hash
 
     if [ $? -eq 0 ]; then
         echo "✅ Subtensor 编译成功！"
