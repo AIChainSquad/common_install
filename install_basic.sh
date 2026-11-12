@@ -7,7 +7,7 @@
 # 文件结构（按功能分组，菜单编号与分组一一对应）：
 #   〇、配置项                 版本号、端口等，要改先看这里
 #   一、通用工具               root 检查、系统检查
-#   二、基础环境               菜单 1、2   常用工具、Conda、Node.js、PM2、Docker
+#   二、基础环境               菜单 1、2   常用工具、Conda、uv、Node.js、PM2、Docker
 #   三、Subtensor 节点         菜单 3      从官方仓库编译节点
 #   四、Bittensor Python 环境  菜单 4      Conda 环境 try + bittensor
 #   五、节点服务器配置         菜单 5、6   系统配置、防火墙（两项互相独立）
@@ -122,6 +122,28 @@ function install_conda() {
     fi
 }
 
+# ---- uv ----
+
+# 检查并安装 uv（Python 包和项目管理工具），装在 ~/.local/bin
+function install_uv() {
+    export PATH="$HOME/.local/bin:$PATH"
+
+    if command -v uv > /dev/null 2>&1; then
+        echo "uv 已安装，版本: $(uv --version)"
+        return 0
+    fi
+
+    echo "uv 未安装，正在安装..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    if command -v uv > /dev/null 2>&1; then
+        echo "uv 安装成功，版本: $(uv --version)"
+    else
+        echo "❌ uv 安装失败，可手动执行: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        return 1
+    fi
+}
+
 # ---- Node.js / PM2 ----
 
 # 检查并安装 Node.js 和 npm
@@ -214,7 +236,7 @@ function install_docker(){
     fi
 }
 
-# ---- 组合（菜单 1）：常用工具 + Conda + Node.js + PM2 + Docker ----
+# ---- 组合（菜单 1）：常用工具 + Conda + uv + Node.js + PM2 + Docker ----
 
 function install_basic() {
     check_system_compatibility
@@ -222,6 +244,7 @@ function install_basic() {
     apt install curl sudo git python3-venv zip iptables build-essential wget jq make gcc nano vim tmux -y
     install_conda
     ensure_conda_initialized
+    install_uv
     install_nodejs_and_npm
     install_pm2
     echo "基础环境已安装，继续安装 Docker..."
@@ -519,7 +542,7 @@ function main_menu() {
     echo "===================== Linux 服务器安装与配置 ====================="
     echo ""
     echo "【基础环境】"
-    echo "  1. 安装基础环境（常用工具 + Conda + Node.js + PM2 + Docker）"
+    echo "  1. 安装基础环境（常用工具 + Conda + uv + Node.js + PM2 + Docker）"
     echo "  2. 仅安装 Docker"
     echo ""
     echo "【Subtensor 节点】"

@@ -12,7 +12,7 @@ wget -O install_basic.sh https://raw.githubusercontent.com/AIChainSquad/common_i
 
 | 分组 | 编号 | 内容 |
 |---|---|---|
-| 基础环境 | 1 | 常用工具 + Conda + Node.js + PM2 + Docker |
+| 基础环境 | 1 | 常用工具 + Conda + uv + Node.js + PM2 + Docker |
 | 基础环境 | 2 | 仅安装 Docker |
 | Subtensor 节点 | 3 | 从官方仓库 main 分支克隆并编译节点 |
 | Bittensor Python 环境 | 4 | 创建 Conda 环境 `try` 并安装 bittensor 等依赖 |
